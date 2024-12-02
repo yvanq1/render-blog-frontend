@@ -1,0 +1,108 @@
+/* Google Fonts 导入 - 科技感字体 */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Play:wght@400;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* Google Fonts 导入 - 新增字体 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Source Serif Pro', 'Noto Serif SC', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 标题使用更优雅的字重 */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+  }
+
+  /* 正文使用稍细的字重，提高可读性 */
+  p, span, li, a {
+    font-weight: 400;
+  }
+
+  body {
+    @apply bg-white text-gray-900 transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+@layer components {
+  .post-card {
+    @apply bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden transition-all duration-300
+           hover:shadow-xl dark:shadow-gray-900/30;
+  }
+
+  .floating-button {
+    @apply fixed z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg 
+           hover:shadow-xl transition-all duration-300 
+           text-gray-600 dark:text-gray-300
+           hover:text-primary-500 dark:hover:text-primary-400;
+  }
+
+  .input-field {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
+           rounded-md px-4 py-2 
+           focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 
+           focus:border-transparent outline-none 
+           transition-all duration-200;
+  }
+}
+
+/* 基础样式 */
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* 动画效果 */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.glass-card input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.glass-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
