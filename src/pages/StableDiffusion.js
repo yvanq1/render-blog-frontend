@@ -4,6 +4,7 @@ import axios from 'axios';
 import PostCard from '../components/Posts/PostCard';
 import Pagination from '../components/Pagination';
 import SortButton from '../components/UI/SortButton';
+import { API_URL } from '../config/api';
 
 const StableDiffusion = () => {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ const StableDiffusion = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/articles', {
+      const response = await axios.get(`${API_URL}/api/articles`, {
         params: {
           tag: selectedTag,
           search: searchParams.get('search'),
@@ -96,7 +97,7 @@ const StableDiffusion = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/articles/tags', {
+      const response = await axios.get(`${API_URL}/api/articles/tags`, {
         params: { category: 'sd' }
       });
       if (response.data.success) {
@@ -146,7 +147,7 @@ const StableDiffusion = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 dark:border-indigo-400"></div>
           </div>
         ) : sortedAndPaginatedPosts.length > 0 ? (
-          <>
+          <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {sortedAndPaginatedPosts.map((post) => (
                 <PostCard key={post.id} post={post} />
@@ -161,7 +162,7 @@ const StableDiffusion = () => {
                 />
               </div>
             )}
-          </>
+          </div>
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">暂无相关文章</p>

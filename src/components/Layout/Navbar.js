@@ -1,6 +1,8 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
+import { API_URL } from '../../config/api';
+
 import { 
   Bars3Icon, 
   XMarkIcon,
@@ -91,7 +93,7 @@ function Navbar() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/articles');
+        const response = await axios.get(`${API_URL}/api/articles`);
         if (response.data.success) {
           setArticles(response.data.data.items || []);
         }

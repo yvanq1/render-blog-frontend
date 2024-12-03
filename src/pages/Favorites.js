@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { ClockIcon, TagIcon } from '@heroicons/react/24/outline';
 import Pagination from '../components/Pagination';
+import { API_URL } from '../config/api';
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -16,7 +17,7 @@ const Favorites = () => {
     const fetchFavorites = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8000/api/favorites?page=${page}&limit=${limit}`, {
+        const response = await axios.get(`${API_URL}/api/favorites?page=${page}&limit=${limit}`, {
           withCredentials: true
         });
         if (response.data.success) {

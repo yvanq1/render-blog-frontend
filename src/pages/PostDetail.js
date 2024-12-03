@@ -5,6 +5,7 @@ import { ClockIcon, EyeIcon, TagIcon, HeartIcon } from '@heroicons/react/24/outl
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import Markdown from 'markdown-to-jsx';
 import { toast } from 'react-hot-toast';
+import { API_URL } from '../config/api';
 
 // 解析markdown内容中的标题
 const extractHeadings = (content) => {
@@ -89,7 +90,7 @@ const PostDetail = () => {
   // 获取收藏状态
   const fetchFavoriteStatus = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/favorites/status/${id}`, {
+      const response = await axios.get(`${API_URL}/api/favorites/status/${id}`, {
         withCredentials: true
       });
       if (response.data.success) {
@@ -113,7 +114,7 @@ const PostDetail = () => {
       }
 
       // 获取所有文章
-      const response = await axios.get('http://localhost:8000/api/articles');
+      const response = await axios.get(`${API_URL}/api/articles`);
       if (response.data.success) {
         const allPosts = response.data.data.items;
         
@@ -139,7 +140,7 @@ const PostDetail = () => {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8000/api/articles/${id}`);
+        const response = await axios.get(`${API_URL}/api/articles/${id}`);
         if (response.data.success) {
           console.log('当前文章数据:', response.data.data);
           setPost(response.data.data);
@@ -153,7 +154,7 @@ const PostDetail = () => {
           if (!viewCountUpdated.current) {
             try {
               const viewResponse = await axios.patch(
-                `http://localhost:8000/api/articles/${id}/views`
+                `${API_URL}/api/articles/${id}/views`
               );
               if (viewResponse.data.success) {
                 // 更新本地文章数据的浏览量
@@ -192,7 +193,7 @@ const PostDetail = () => {
       setFavLoading(true);
       if (isFavorited) {
         // 取消收藏
-        const response = await axios.delete(`http://localhost:8000/api/favorites/${id}`, {
+        const response = await axios.delete(`${API_URL}/api/favorites/${id}`, {
           withCredentials: true
         });
         if (response.data.success) {
@@ -201,7 +202,7 @@ const PostDetail = () => {
         }
       } else {
         // 添加收藏
-        const response = await axios.post('http://localhost:8000/api/favorites', {
+        const response = await axios.post(`${API_URL}/api/favorites`, {
           articleId: id
         }, {
           withCredentials: true

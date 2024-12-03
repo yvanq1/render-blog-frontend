@@ -4,6 +4,7 @@ import axios from 'axios';
 import PostCard from '../components/Posts/PostCard';
 import Pagination from '../components/Pagination';
 import SortButton from '../components/UI/SortButton';
+import { API_URL } from '../config/api';
 
 const ComfyUI = () => {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ const ComfyUI = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/articles', {
+      const response = await axios.get(`${API_URL}/api/articles`, {
         params: {
           tag: selectedTag,
           search: searchParams.get('search'),
@@ -96,7 +97,7 @@ const ComfyUI = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/articles/tags', {
+      const response = await axios.get(`${API_URL}/api/articles/tags`, {
         params: { category: 'comfyui' }
       });
       if (response.data.success) {

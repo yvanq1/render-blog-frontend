@@ -5,6 +5,7 @@ import PostCard from './PostCard';
 import Carousel from './Carousel';
 import Pagination from '../Common/Pagination';
 import SortButton from '../UI/SortButton';
+import { API_URL } from '../../config/api';
 
 const Posts = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +23,7 @@ const Posts = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/articles', {
+      const response = await axios.get(`${API_URL}/api/articles`, {
         params: {
           tag: selectedTag,
           search: searchParams.get('search')
@@ -93,7 +94,7 @@ const Posts = () => {
 
   const fetchCarouselPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/banners');
+      const response = await axios.get(`${API_URL}/api/banners`);
       if (response.data.success) {
         console.log('Banner data:', response.data.data);
         const banners = response.data.data.map(banner => {
@@ -117,7 +118,7 @@ const Posts = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/articles/tags');
+      const response = await axios.get(`${API_URL}/api/articles/tags`);
       if (response.data.success) {
         setTags(response.data.data);
       }
@@ -184,7 +185,7 @@ const Posts = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 dark:border-indigo-400"></div>
           </div>
         ) : sortedAndPaginatedPosts.length > 0 ? (
-          <>
+          <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {sortedAndPaginatedPosts.map((post) => (
                 <PostCard key={post._id} post={post} />
@@ -199,7 +200,7 @@ const Posts = () => {
                 />
               </div>
             )}
-          </>
+          </div>
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">暂无文章</p>
