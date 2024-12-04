@@ -2,6 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
+const isExternalUrl = (url) => {
+  if (!url) return false;
+  return url.startsWith('http://') || url.startsWith('https://');
+};
+
 const Carousel = ({ posts = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -115,38 +120,75 @@ const Carousel = ({ posts = [] }) => {
               const style = getCardStyle(index);
               
               return (
-                <Link
-                  key={slideKey}
-                  to={post.link || `/post/${post._id}`}
-                  className="absolute w-[90%] h-[95%] transition-all duration-700 ease-out hover:cursor-pointer will-change-transform"
-                  style={{
-                    transform: style.transform,
-                    opacity: style.opacity,
-                    zIndex: style.zIndex,
-                    filter: style.filter,
-                  }}
-                >
-                  <div className="relative h-full w-full rounded-2xl overflow-hidden 
+                isExternalUrl(post.link) ? (
+                  <a
+                    key={slideKey}
+                    href={post.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute w-[90%] h-[95%] transition-all duration-700 ease-out hover:cursor-pointer will-change-transform"
+                    style={{
+                      transform: style.transform,
+                      opacity: style.opacity,
+                      zIndex: style.zIndex,
+                      filter: style.filter,
+                    }}
+                  >
+                    <div className="relative h-full w-full rounded-2xl overflow-hidden 
                                 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]
                                 backdrop-blur-sm bg-white/30 dark:bg-black/30
                                 group hover:shadow-[0_20px_50px_rgb(0,0,0,0.3)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.5)]
                                 transition-all duration-500">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent dark:from-black/90 dark:via-black/40 dark:to-black/20" />
-                    <img
-                      src={post.coverImage}
-                      alt={post.title}
-                      className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                      <h3 className="text-2xl font-bold mb-3 drop-shadow-lg">{post.title}</h3>
-                      {post.description && (
-                        <p className="text-base text-gray-100 dark:text-gray-200 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                          {post.description}
-                        </p>
-                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent dark:from-black/90 dark:via-black/40 dark:to-black/20" />
+                      <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 className="text-2xl font-bold mb-3 drop-shadow-lg">{post.title}</h3>
+                        {post.description && (
+                          <p className="text-base text-gray-100 dark:text-gray-200 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                            {post.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </a>
+                ) : (
+                  <Link
+                    key={slideKey}
+                    to={`/post/${post._id}`}
+                    className="absolute w-[90%] h-[95%] transition-all duration-700 ease-out hover:cursor-pointer will-change-transform"
+                    style={{
+                      transform: style.transform,
+                      opacity: style.opacity,
+                      zIndex: style.zIndex,
+                      filter: style.filter,
+                    }}
+                  >
+                    <div className="relative h-full w-full rounded-2xl overflow-hidden 
+                                shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)]
+                                backdrop-blur-sm bg-white/30 dark:bg-black/30
+                                group hover:shadow-[0_20px_50px_rgb(0,0,0,0.3)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.5)]
+                                transition-all duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent dark:from-black/90 dark:via-black/40 dark:to-black/20" />
+                      <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 className="text-2xl font-bold mb-3 drop-shadow-lg">{post.title}</h3>
+                        {post.description && (
+                          <p className="text-base text-gray-100 dark:text-gray-200 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                            {post.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                )
               );
             })}
           </div>
