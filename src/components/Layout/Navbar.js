@@ -142,7 +142,7 @@ function Navbar() {
 
   // 处理搜索结果点击
   const handleResultClick = (article) => {
-    navigate(`/post/${article.id}`);
+    navigate(`/post/${article._id}`);
     setSearchQuery('');
     setSearchResults([]);
     setShowResults(false);
