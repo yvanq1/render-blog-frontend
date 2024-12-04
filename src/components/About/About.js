@@ -1,5 +1,4 @@
 import React from 'react';
-import avatar from '../../assets/头像.jpg';
 
 function About() {
   return (
@@ -11,7 +10,7 @@ function About() {
             <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
               <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 overflow-hidden bg-white">
                 <img
-                  src={avatar}
+                  src="/头像.jpg"
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
