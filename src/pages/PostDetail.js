@@ -6,6 +6,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import Markdown from 'markdown-to-jsx';
 import { toast } from 'react-hot-toast';
 import { API_URL } from '../config/api';
+import { useAuth } from '../context/AuthContext';
 
 // 解析markdown内容中的标题
 const extractHeadings = (content) => {
@@ -77,6 +78,7 @@ const TableOfContents = ({ headings, activeId }) => {
 const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -90,14 +92,18 @@ const PostDetail = () => {
   // 获取收藏状态
   const fetchFavoriteStatus = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) return;  // If no token, don't make the request
+      
       const response = await axios.get(`${API_URL}/api/favorites/status/${id}`, {
-        withCredentials: true
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       if (response.data.success) {
         setIsFavorited(response.data.data.isFavorited);
       }
     } catch (error) {
-      // 如果是未登录错误，不显示错误提示
       if (error.response?.status !== 401) {
         console.error('获取收藏状态失败:', error);
       }
@@ -153,19 +159,26 @@ const PostDetail = () => {
           // 更新浏览量（只在第一次加载时更新）
           if (!viewCountUpdated.current) {
             try {
-              const viewResponse = await axios.patch(
-                `${API_URL}/api/articles/${id}/views`
+              const viewResponse = await axios.put(
+                `${API_URL}/api/articles/${id}/views`,
+                {},  // empty body
+                {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }
               );
               if (viewResponse.data.success) {
                 // 更新本地文章数据的浏览量
                 setPost(prev => ({
                   ...prev,
-                  views: viewResponse.data.data.views
+                  views: (prev.views || 0) + 1
                 }));
                 viewCountUpdated.current = true;  // 标记浏览量已更新
               }
             } catch (viewError) {
               console.error('更新浏览量失败:', viewError);
+              // Don't show error to user since view count is not critical
             }
           }
         } else {
@@ -190,11 +203,19 @@ const PostDetail = () => {
   // 处理收藏/取消收藏
   const handleFavorite = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('请先登录');
+        return;
+      }
+
       setFavLoading(true);
       if (isFavorited) {
         // 取消收藏
         const response = await axios.delete(`${API_URL}/api/favorites/${id}`, {
-          withCredentials: true
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (response.data.success) {
           setIsFavorited(false);
@@ -205,7 +226,9 @@ const PostDetail = () => {
         const response = await axios.post(`${API_URL}/api/favorites`, {
           articleId: id
         }, {
-          withCredentials: true
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (response.data.success) {
           setIsFavorited(true);

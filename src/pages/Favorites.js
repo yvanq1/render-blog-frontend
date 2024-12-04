@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { ClockIcon, TagIcon } from '@heroicons/react/24/outline';
 import Pagination from '../components/Pagination';
 import { API_URL } from '../config/api';
+import { useAuth } from '../context/AuthContext';
 
 const Favorites = () => {
+  const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,24 +18,36 @@ const Favorites = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('请先登录');
+          return;
+        }
+
         setLoading(true);
         const response = await axios.get(`${API_URL}/api/favorites?page=${page}&limit=${limit}`, {
-          withCredentials: true
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (response.data.success) {
           setFavorites(response.data.data.favorites);
           setTotalPages(Math.ceil(response.data.data.total / limit));
         }
       } catch (error) {
-        console.error('获取收藏列表失败:', error);
-        setError('获取收藏列表失败');
+        if (error.response?.status === 401) {
+          setError('请先登录');
+        } else {
+          console.error('获取收藏列表失败:', error);
+          setError('获取收藏列表失败');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchFavorites();
-  }, [page]);
+  }, [page, limit]);
 
   if (loading) {
     return (
@@ -105,10 +119,10 @@ const Favorites = () => {
         <div className="space-y-6">
           {favorites.map((favorite) => (
             <article
-              key={favorite.id}
+              key={favorite._id}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
             >
-              <Link to={`/post/${favorite.articleId}`} className="block p-6">
+              <Link to={`/post/${favorite.article._id}`} className="block p-6">
                 <div className="flex items-start justify-between">
                   <div className="space-y-3 flex-1">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
