@@ -10,7 +10,7 @@ function About() {
             <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
               <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 overflow-hidden bg-white">
                 <img
-                  src="/头像.jpg"
+                  src="https://yvanblog.oss-cn-guangzhou.aliyuncs.com/uploads/%E5%A4%B4%E5%83%8F.jpg"
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
