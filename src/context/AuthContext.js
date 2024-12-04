@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     // 检查会话状态
     const checkAuth = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/auth/check', {
+        const response = await axios.get(`${API_URL}/api/auth/check`, {
           withCredentials: true
         });
         if (response.data.success) {
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
         password
       }, {
@@ -52,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async ({ username, email, password }) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         username,
         email,
         password
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:8000/api/auth/logout', {}, {
+      await axios.post(`${API_URL}/api/auth/logout`, {}, {
         withCredentials: true
       });
     } catch (error) {

@@ -11,7 +11,7 @@ function Layout({ children }) {
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {!isAuthPage && <Navbar />}
-      <main className="flex-grow">
+      <main className="flex-grow mt-16">
         {children}
       </main>
       {!isAuthPage && <Footer />}
