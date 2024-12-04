@@ -49,10 +49,10 @@ const Register = () => {
       if (result.success) {
         navigate('/');
       } else {
-        setError(result.error || '注册失败，请重试');
+        setError(result.message);
       }
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -61,6 +61,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <ParticleBackground />
+      
       <div className="glass-card w-full max-w-md p-8 rounded-2xl space-y-6 relative">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-white mb-2 font-['Orbitron']">注册</h2>

@@ -74,6 +74,37 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async ({ username, email, password }) => {
+    try {
+      console.log('开始注册请求 - API地址:', `${API_URL}/api/auth/register`);
+      console.log('注册信息:', { username, email });
+
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
+        username,
+        email,
+        password
+      });
+
+      console.log('注册响应:', response.data);
+      if (response.data.success) {
+        // 注册成功后自动登录
+        const token = response.data.data.token;
+        localStorage.setItem('token', token);
+        setUser(response.data.data.user);
+        return { success: true };
+      } else {
+        return { success: false, message: response.data.message };
+      }
+    } catch (error) {
+      console.error('注册失败:', error);
+      console.log('错误详情:', error.response?.data || '无详细错误信息');
+      return {
+        success: false,
+        message: error.response?.data?.message || '注册失败，请稍后重试'
+      };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -84,6 +115,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
+    register,
     checkAuth,
     isAuthenticated: !!user
   };
