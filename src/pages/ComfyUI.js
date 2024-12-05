@@ -113,7 +113,7 @@ const ComfyUI = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* 页面标题 */}
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
-          ComfyUI
+          ComfyUI专题
         </h1>
 
         {/* 标签列表 */}
