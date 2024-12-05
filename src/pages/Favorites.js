@@ -117,54 +117,59 @@ const Favorites = () => {
         </h1>
 
         <div className="space-y-6">
-          {favorites.map((favorite) => (
-            <article
-              key={favorite._id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
-            >
-              <Link to={`/post/${favorite.article._id}`} className="block p-6">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-3 flex-1">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
-                      {favorite.article.title}
-                    </h2>
+          {favorites.map((favorite) => {
+            // 如果文章不存在，跳过渲染
+            if (!favorite?.article) return null;
 
-                    {/* 文章元信息 */}
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                      <div className="flex items-center gap-1">
-                        <ClockIcon className="h-4 w-4" />
-                        <time dateTime={favorite.article.createdAt}>
-                          {new Date(favorite.article.createdAt).toLocaleDateString('zh-CN', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </time>
-                      </div>
+            return (
+              <article
+                key={favorite._id}
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
+              >
+                <Link to={`/post/${favorite.article._id}`} className="block p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-3 flex-1">
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">
+                        {favorite.article.title}
+                      </h2>
 
-                      {favorite.article.category && (
+                      {/* 文章元信息 */}
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1">
-                          <TagIcon className="h-4 w-4" />
-                          <span>{favorite.article.category}</span>
+                          <ClockIcon className="h-4 w-4" />
+                          <time dateTime={favorite.article.createdAt}>
+                            {new Date(favorite.article.createdAt).toLocaleDateString('zh-CN', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </time>
                         </div>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* 文章封面图 */}
-                  {favorite.article.coverImage && (
-                    <div className="ml-6 flex-shrink-0">
-                      <img
-                        src={favorite.article.coverImage}
-                        alt={favorite.article.title}
-                        className="h-24 w-24 object-cover rounded-lg"
-                      />
+                        {favorite.article.category && (
+                          <div className="flex items-center gap-1">
+                            <TagIcon className="h-4 w-4" />
+                            <span>{favorite.article.category}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </Link>
-            </article>
-          ))}
+
+                    {/* 文章封面图 */}
+                    {favorite.article.coverImage && (
+                      <div className="ml-6 flex-shrink-0">
+                        <img
+                          src={favorite.article.coverImage}
+                          alt={favorite.article.title}
+                          className="h-24 w-24 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              </article>
+            );
+          })}
         </div>
 
         {/* 分页 */}

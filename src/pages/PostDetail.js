@@ -8,41 +8,96 @@ import { toast } from 'react-hot-toast';
 import { API_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
-// 解析markdown内容中的标题
+// 生成标题的slug
+const generateSlug = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-') // 支持中文字符
+    .replace(/(^-|-$)/g, '')
+    .trim();
+};
+
+// 提取文章中的标题
 const extractHeadings = (content) => {
+  if (!content) return [];
+
+  // 使用正则表达式匹配所有标题
+  const headingRegex = /^(#{1,6})\s+(.+?)(?:\n|$)/gm;
   const headings = [];
-  const lines = content.split('\n');
+  let match;
   let id = 0;
 
-  lines.forEach((line) => {
-    const match = line.match(/^(#{1,6})\s+(.+)$/);
-    if (match) {
-      const level = match[1].length;
-      const text = match[2];
-      const slug = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-      
-      headings.push({
-        id: `heading-${id++}`,
-        level,
-        text,
-        slug
-      });
-    }
-  });
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const slug = generateSlug(text);
+
+    headings.push({
+      id: `heading-${id++}`,
+      level,
+      text,
+      slug
+    });
+  }
 
   return headings;
+};
+
+// 自定义标题渲染器
+const HeadingRenderer = ({ level, children }) => {
+  const text = children[0] || '';
+  const slug = generateSlug(text);
+
+  const Tag = `h${level}`;
+  
+  // 根据标题级别返回对应的样式
+  const getHeadingStyle = (level) => {
+    switch (level) {
+      case 1:
+        return 'text-4xl font-bold mt-12 mb-8 pb-4 border-b border-gray-200 dark:border-gray-700 scroll-mt-24';
+      case 2:
+        return 'text-3xl font-bold mt-10 mb-6 scroll-mt-24';
+      case 3:
+        return 'text-2xl font-bold mt-8 mb-4 scroll-mt-24';
+      case 4:
+        return 'text-xl font-semibold mt-6 mb-4 scroll-mt-24';
+      case 5:
+        return 'text-lg font-semibold mt-4 mb-2 scroll-mt-24';
+      case 6:
+        return 'text-base font-semibold mt-4 mb-2 scroll-mt-24';
+      default:
+        return 'scroll-mt-24';
+    }
+  };
+  
+  return React.createElement(Tag, {
+    id: slug,
+    className: getHeadingStyle(level)
+  }, children);
 };
 
 const TableOfContents = ({ headings, activeId }) => {
   if (headings.length === 0) return null;
 
+  const handleClick = (e, slug) => {
+    e.preventDefault();
+    const element = document.getElementById(slug);
+    if (element) {
+      const navHeight = 96; // 导航栏高度
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
     <nav className="hidden lg:block fixed left-8 top-1/4 w-64 max-h-[60vh] overflow-y-auto 
-                    p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg space-y-2
-                    scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+                  p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg space-y-2
+                  scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
       <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">目录</h2>
       <ul className="space-y-2">
         {headings.map((heading) => (
@@ -52,19 +107,13 @@ const TableOfContents = ({ headings, activeId }) => {
           >
             <a
               href={`#${heading.slug}`}
+              onClick={(e) => handleClick(e, heading.slug)}
               className={`block py-1 text-sm transition-colors duration-200 
                         hover:text-indigo-600 dark:hover:text-indigo-400
                         ${activeId === heading.slug
                           ? 'text-indigo-600 dark:text-indigo-400 font-medium'
                           : 'text-gray-600 dark:text-gray-400'
                         }`}
-              onClick={(e) => {
-                e.preventDefault();
-                const element = document.getElementById(heading.slug);
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
             >
               {heading.text}
             </a>
@@ -276,42 +325,6 @@ const PostDetail = () => {
       setHeadings(extractedHeadings);
     }
   }, [post?.content]);
-
-  // 自定义标题渲染，添加id用于导航
-  const HeadingRenderer = ({ level, children }) => {
-    const text = children[0] || '';
-    const slug = text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-
-    const Tag = `h${level}`;
-    
-    // 根据标题级别返回对应的样式
-    const getHeadingStyle = (level) => {
-      switch (level) {
-        case 1:
-          return 'text-4xl font-bold mt-12 mb-8 pb-4 border-b border-gray-200 dark:border-gray-700';
-        case 2:
-          return 'text-3xl font-bold mt-10 mb-6';
-        case 3:
-          return 'text-2xl font-bold mt-8 mb-4';
-        case 4:
-          return 'text-xl font-semibold mt-6 mb-4';
-        case 5:
-          return 'text-lg font-semibold mt-4 mb-2';
-        case 6:
-          return 'text-base font-semibold mt-4 mb-2';
-        default:
-          return '';
-      }
-    };
-    
-    return React.createElement(Tag, {
-      id: slug,
-      className: getHeadingStyle(level)
-    }, children);
-  };
 
   // 自定义代码块渲染
   const CodeBlock = ({ children, className }) => {
