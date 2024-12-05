@@ -137,6 +137,7 @@ const PostDetail = () => {
   const viewCountUpdated = useRef(false);  // 添加ref来跟踪浏览量是否已更新
   const [headings, setHeadings] = useState([]);
   const [activeHeading, setActiveHeading] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   // 获取收藏状态
   const fetchFavoriteStatus = async () => {
@@ -345,6 +346,20 @@ const PostDetail = () => {
       h4: { component: HeadingRenderer, props: { level: 4 } },
       h5: { component: HeadingRenderer, props: { level: 5 } },
       h6: { component: HeadingRenderer, props: { level: 6 } },
+      img: {
+        component: ({ alt, ...props }) => (
+          <div className="relative">
+            <img
+              {...props}
+              alt={alt}
+              className="rounded-lg w-full h-auto shadow-lg cursor-zoom-in hover:opacity-90 transition-opacity duration-300"
+              loading="lazy"
+              onClick={() => setPreviewImage(props.src)}
+              title="点击查看大图"
+            />
+          </div>
+        ),
+      },
       code: CodeBlock,
       pre: ({ children }) => <>{children}</>,
       a: {
@@ -357,16 +372,6 @@ const PostDetail = () => {
           >
             {children}
           </a>
-        ),
-      },
-      img: {
-        component: ({ alt, ...props }) => (
-          <img
-            {...props}
-            alt={alt}
-            className="rounded-lg max-w-full h-auto my-6 mx-auto shadow-lg"
-            loading="lazy"
-          />
         ),
       },
       p: {
@@ -466,6 +471,21 @@ const PostDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-morandi-beige/70 via-morandi-rose/50 to-morandi-blue/60 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* 图片预览遮罩 */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 cursor-zoom-out"
+          onClick={() => setPreviewImage(null)}
+        >
+          <img
+            src={previewImage}
+            alt="预览图"
+            className="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+      
       {/* 目录导航 */}
       <TableOfContents headings={headings} activeId={activeHeading} />
       
@@ -548,7 +568,7 @@ const PostDetail = () => {
         </header>
 
         {/* 文章内容 */}
-        <article className="prose prose-base md:prose-lg dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-img:rounded-lg prose-img:shadow-lg max-w-none">
+        <article className="prose prose-base md:prose-lg dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-h5:text-lg prose-h6:text-base prose-img:rounded-lg prose-img:shadow-lg max-w-none">
           <Markdown options={markdownOptions}>{post.content}</Markdown>
         </article>
 
